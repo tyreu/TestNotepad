@@ -16,17 +16,27 @@ namespace TestNotepad
         Mode CurrentMode = Mode.Custom;
         internal const string DbName = @"TestNotepadDatabase.sqlite";
         public string Path => AppConfiguration.GetSetting("PathToDb");
+        public SQLiteConnection Connection { get; }
         public MainForm()
         {
             archiver = new Archiver();
+            Connection = new SQLiteConnection($"Data Source={Path}\\{DbName};Version=3;");
             InitializeComponent();
             SaveMenuItem.Shortcuts.Add(new RadShortcut(Keys.Control, Keys.S));
-            SaveAsMenuItem.Shortcuts.Add(new RadShortcut(Keys.Control, Keys.Shift, Keys.S));
+            SaveAsMenuItem.Shortcuts.Add(new RadShortcut(Keys.Shift, Keys.S));
             OpenMenuItem.Shortcuts.Add(new RadShortcut(Keys.Control, Keys.O));
             NewMenuItem.Shortcuts.Add(new RadShortcut(Keys.Control, Keys.N));
             ModeStripLabel.Text = $"Режим: {CurrentMode}";
             Text += ProductVersion;
             SetUserStyle();
+        }
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            Connection.Open();
+            string sql = "create table IF NOT EXISTS Files (Id INTEGER PRIMARY KEY AUTOINCREMENT, name text, data BLOB)";
+            SQLiteCommand command = new SQLiteCommand(sql, Connection);
+            command.ExecuteNonQuery();
+            Connection.Close();
         }
         private void SetXMLStyle()
         {
@@ -73,16 +83,18 @@ namespace TestNotepad
         }
         private void OpenMenuItem_Click(object sender, EventArgs e)
         {
-            var openForm = new OpenFileForm();
-            openForm.ShowDialog();
-            CurrentId = openForm.ChosenId;//открыть файл по id 
-            SQLiteConnection connection = new SQLiteConnection($"Data Source={Path}\\{DbName};Version=3;");
-            connection.Open();
-            var sql = $"select data from files where id = {CurrentId}";
-            var reader = new SQLiteCommand(sql, connection).ExecuteReader();
-            while (reader.Read())
-                TextEditor.Text = archiver.Unzip((byte[])reader["data"]);
-            connection.Close();
+            if (Path != "" && File.Exists($"{Path}\\{DbName}"))//if db exists
+            {
+                var openForm = new OpenFileForm();
+                openForm.ShowDialog();
+                CurrentId = openForm.ChosenId;//открыть файл по id 
+                Connection.Open();
+                var sql = $"select data from files where id = {CurrentId}";
+                var reader = new SQLiteCommand(sql, Connection).ExecuteReader();
+                while (reader.Read())
+                    TextEditor.Text = archiver.Unzip((byte[])reader["data"]);
+                Connection.Close();
+            }
         }
         private async void SaveMenuItem_Click(object sender, EventArgs e)
         {
@@ -92,46 +104,32 @@ namespace TestNotepad
                     SaveNewFile();
                 else//если открыли существующий файл
                 {
-                    SQLiteConnection connection = new SQLiteConnection($"Data Source={Path}\\{DbName};Version=3;");
-                    connection.Open();
-                    SQLiteCommand command = new SQLiteCommand(connection);
+                    Connection.Open();
+                    SQLiteCommand command = new SQLiteCommand(Connection);
                     command.CommandText = "update files set data = @data where Id = @id";
                     command.Parameters.Add("@data", DbType.Binary, 20).Value = archiver.Zip(TextEditor.Text);
                     command.Parameters.Add("@id", DbType.Int32, 20).Value = CurrentId;
                     await command.ExecuteNonQueryAsync();
-                    connection.Close();
+                    Connection.Close();
                 }
             }
             else
             {
-                SQLiteConnection.CreateFile(DbName);
-
-                var saveFileForm = new SaveFileForm();
-                saveFileForm.ShowDialog();
-                SQLiteConnection connection = new SQLiteConnection($"Data Source={DbName};Version=3;");
-                connection.Open();
-                string sql = "create table Files (Id INTEGER PRIMARY KEY AUTOINCREMENT, name text, data BLOB)";
-                SQLiteCommand command = new SQLiteCommand(sql, connection);
-                await command.ExecuteNonQueryAsync();
-                command.CommandText = "insert into Files (name, data) VALUES (@name, @data)";
-                command.Parameters.Add("@name", DbType.String, 50).Value = saveFileForm.FileName;
-                command.Parameters.Add("@data", DbType.Binary, 20).Value = archiver.Zip(TextEditor.Text);
-                await command.ExecuteNonQueryAsync();
-                connection.Close();
+                SQLiteConnection.CreateFile($"{Path}\\{DbName}");
+                SaveNewFile();
             }
         }
         private async void SaveNewFile()
         {
             var saveFileForm = new SaveFileForm();
             saveFileForm.ShowDialog();
-            SQLiteConnection connection = new SQLiteConnection($"Data Source={DbName};Version=3;");
-            connection.Open();
-            SQLiteCommand command = new SQLiteCommand(connection);
+            Connection.Open();
+            SQLiteCommand command = new SQLiteCommand(Connection);
             command.CommandText = "insert into Files (name, data) VALUES (@name, @data)";
             command.Parameters.Add("@name", DbType.String, 50).Value = saveFileForm.FileName;
             command.Parameters.Add("@data", DbType.Binary, 20).Value = archiver.Zip(TextEditor.Text);
             await command.ExecuteNonQueryAsync();
-            connection.Close();
+            Connection.Close();
         }
         private void SaveAsMenuItem_Click(object sender, EventArgs e) => SaveNewFile();
         private void SetXMLStyle_Click(object sender, EventArgs e) => SetXMLStyle();
