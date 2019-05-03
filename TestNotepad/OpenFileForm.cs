@@ -28,10 +28,13 @@ namespace TestNotepad
                 connection.Close();
             }
         }
-
         private void FileListView_ItemMouseDoubleClick(object sender, ListViewItemEventArgs e)
         {
-            ChosenId = (int)e.Item[0];
+            if (int.TryParse($"{e.Item[0]}", out int Id))
+            {
+                ChosenId = Id;
+                Close();
+            }
         }
     }
 }
