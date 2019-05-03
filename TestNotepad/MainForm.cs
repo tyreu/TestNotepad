@@ -42,7 +42,7 @@ namespace TestNotepad
             TextEditor.Lexer = Lexer.Xml;
             CurrentMode = Mode.XML;
             radMenuItem2.IsChecked = true;
-            radMenuItem3.IsChecked = false;
+            radMenuItem3.IsChecked = radMenuItem1.IsChecked = false;
             ModeStripLabel.Text = $"Режим: {CurrentMode}";
         }
         private void SetJSONStyle()
@@ -57,7 +57,7 @@ namespace TestNotepad
             TextEditor.Lexer = Lexer.Json;
             CurrentMode = Mode.JSON;
             radMenuItem3.IsChecked = true;
-            radMenuItem2.IsChecked = false;
+            radMenuItem2.IsChecked = radMenuItem1.IsChecked = false;
             ModeStripLabel.Text = $"Режим: {CurrentMode}";
         }
         private void SetUserStyle()
