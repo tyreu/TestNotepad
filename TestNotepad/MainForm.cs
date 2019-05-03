@@ -7,14 +7,6 @@ using System.IO;
 using System.Windows.Forms;
 using Telerik.WinControls;
 
-/*
-- Настройки подключения к базе в файле конфигурации приложения
-- Обеспечить сжатие информации при хранении в БД средством любой ThirdParty библиотеки
-- Разработать форму выбора файла для загрузки
-- Загрузка файла из базы и сохранение в базу асинхронно
-- Разработать форму ввода имени файла для сохранения
-- Для форматов json и xml обеспечить подсветку синтаксиса и форматирование
- */
 namespace TestNotepad
 {
     public partial class MainForm : Telerik.WinControls.UI.RadForm
@@ -34,10 +26,7 @@ namespace TestNotepad
             NewMenuItem.Shortcuts.Add(new RadShortcut(Keys.Control, Keys.N));
             ModeStripLabel.Text = $"Режим: {CurrentMode}";
             Text += ProductVersion;
-            TextEditor.StyleResetDefault();
-            TextEditor.Styles[Style.Default].Font = "Consolas";
-            TextEditor.Styles[Style.Default].Size = 11;
-            TextEditor.StyleClearAll();
+            SetUserStyle();
         }
         private void SetXMLStyle()
         {
@@ -52,6 +41,8 @@ namespace TestNotepad
             TextEditor.Styles[Style.Xml.TagEnd].ForeColor = Color.SaddleBrown;
             TextEditor.Lexer = Lexer.Xml;
             CurrentMode = Mode.XML;
+            radMenuItem2.IsChecked = true;
+            radMenuItem3.IsChecked = false;
             ModeStripLabel.Text = $"Режим: {CurrentMode}";
         }
         private void SetJSONStyle()
@@ -65,11 +56,21 @@ namespace TestNotepad
             TextEditor.Styles[Style.Json.String].ForeColor = Color.Green;
             TextEditor.Lexer = Lexer.Json;
             CurrentMode = Mode.JSON;
+            radMenuItem3.IsChecked = true;
+            radMenuItem2.IsChecked = false;
             ModeStripLabel.Text = $"Режим: {CurrentMode}";
         }
-        private void SetXMLStyle_Click(object sender, EventArgs e) => SetXMLStyle();
-        private void SetJSONStyle_Click(object sender, EventArgs e) => SetJSONStyle();
-        private void OpenSettingsForm(object sender, EventArgs e) => new SettingsForm().Show();
+        private void SetUserStyle()
+        {
+            TextEditor.StyleResetDefault();
+            TextEditor.Styles[Style.Default].Font = "Consolas";
+            TextEditor.Styles[Style.Default].Size = 11;
+            TextEditor.StyleClearAll();
+            radMenuItem3.IsChecked = radMenuItem2.IsChecked = false;
+            radMenuItem1.IsChecked = true;
+            CurrentMode = Mode.Custom;
+            ModeStripLabel.Text = $"Режим: {CurrentMode}";
+        }
         private void OpenMenuItem_Click(object sender, EventArgs e)
         {
             var openForm = new OpenFileForm();
@@ -87,34 +88,26 @@ namespace TestNotepad
         {
             if (Path != "" && File.Exists($"{Path}\\{DbName}"))//if db exists
             {
-                SQLiteConnection connection = new SQLiteConnection($"Data Source={Path}\\{DbName};Version=3;");
-                connection.Open();
-                string sql = "";
-                SQLiteCommand command = new SQLiteCommand(connection);
                 if (CurrentId == -1)//если документ новый
-                {
-                    var saveFileForm = new SaveFileForm();
-                    saveFileForm.ShowDialog();
-                    command.CommandText = "insert into Files (name, data) VALUES (@name, @data)";
-                    command.Parameters.Add("@name", DbType.String, 50).Value = saveFileForm.FileName;
-                    command.Parameters.Add("@data", DbType.Binary, 20).Value = archiver.Zip(TextEditor.Text);
-                    await command.ExecuteNonQueryAsync();
-                }
+                    SaveNewFile();
                 else//если открыли существующий файл
                 {
-                    sql = $"update files set data = @data where Id = @id";
-                    command.CommandText = "update files set data = @data";
+                    SQLiteConnection connection = new SQLiteConnection($"Data Source={Path}\\{DbName};Version=3;");
+                    connection.Open();
+                    SQLiteCommand command = new SQLiteCommand(connection);
+                    command.CommandText = "update files set data = @data where Id = @id";
                     command.Parameters.Add("@data", DbType.Binary, 20).Value = archiver.Zip(TextEditor.Text);
                     command.Parameters.Add("@id", DbType.Int32, 20).Value = CurrentId;
                     await command.ExecuteNonQueryAsync();
+                    connection.Close();
                 }
-                connection.Close();
             }
             else
             {
+                SQLiteConnection.CreateFile(DbName);
+
                 var saveFileForm = new SaveFileForm();
                 saveFileForm.ShowDialog();
-                SQLiteConnection.CreateFile(DbName);
                 SQLiteConnection connection = new SQLiteConnection($"Data Source={DbName};Version=3;");
                 connection.Open();
                 string sql = "create table Files (Id INTEGER PRIMARY KEY AUTOINCREMENT, name text, data BLOB)";
@@ -127,10 +120,28 @@ namespace TestNotepad
                 connection.Close();
             }
         }
-
-        private void SaveAsMenuItem_Click(object sender, EventArgs e)
+        private async void SaveNewFile()
         {
-
+            var saveFileForm = new SaveFileForm();
+            saveFileForm.ShowDialog();
+            SQLiteConnection connection = new SQLiteConnection($"Data Source={DbName};Version=3;");
+            connection.Open();
+            SQLiteCommand command = new SQLiteCommand(connection);
+            command.CommandText = "insert into Files (name, data) VALUES (@name, @data)";
+            command.Parameters.Add("@name", DbType.String, 50).Value = saveFileForm.FileName;
+            command.Parameters.Add("@data", DbType.Binary, 20).Value = archiver.Zip(TextEditor.Text);
+            await command.ExecuteNonQueryAsync();
+            connection.Close();
+        }
+        private void SaveAsMenuItem_Click(object sender, EventArgs e) => SaveNewFile();
+        private void SetXMLStyle_Click(object sender, EventArgs e) => SetXMLStyle();
+        private void SetJSONStyle_Click(object sender, EventArgs e) => SetJSONStyle();
+        private void SetUserStyle_Click(object sender, EventArgs e) => SetUserStyle();
+        private void OpenSettingsForm(object sender, EventArgs e) => new SettingsForm().Show();
+        private void NewMenuItem_Click(object sender, EventArgs e)
+        {
+            TextEditor.ClearAll();
+            CurrentId = -1;
         }
     }
 }

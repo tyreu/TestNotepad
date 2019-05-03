@@ -31,17 +31,18 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.radMenu1 = new Telerik.WinControls.UI.RadMenu();
             this.FileMenuItem = new Telerik.WinControls.UI.RadMenuItem();
+            this.NewMenuItem = new Telerik.WinControls.UI.RadMenuItem();
             this.OpenMenuItem = new Telerik.WinControls.UI.RadMenuItem();
             this.SaveMenuItem = new Telerik.WinControls.UI.RadMenuItem();
+            this.SaveAsMenuItem = new Telerik.WinControls.UI.RadMenuItem();
             this.LanguageMenuItem = new Telerik.WinControls.UI.RadMenuItem();
             this.radMenuItem2 = new Telerik.WinControls.UI.RadMenuItem();
             this.radMenuItem3 = new Telerik.WinControls.UI.RadMenuItem();
+            this.radMenuItem1 = new Telerik.WinControls.UI.RadMenuItem();
             this.SettingsMenuItem = new Telerik.WinControls.UI.RadMenuItem();
             this.TextEditor = new ScintillaNET.Scintilla();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.ModeStripLabel = new System.Windows.Forms.ToolStripLabel();
-            this.NewMenuItem = new Telerik.WinControls.UI.RadMenuItem();
-            this.SaveAsMenuItem = new Telerik.WinControls.UI.RadMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.radMenu1)).BeginInit();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
@@ -68,6 +69,12 @@
             this.FileMenuItem.Name = "FileMenuItem";
             this.FileMenuItem.Text = "Файл";
             // 
+            // NewMenuItem
+            // 
+            this.NewMenuItem.Name = "NewMenuItem";
+            this.NewMenuItem.Text = "Создать";
+            this.NewMenuItem.Click += new System.EventHandler(this.NewMenuItem_Click);
+            // 
             // OpenMenuItem
             // 
             this.OpenMenuItem.Name = "OpenMenuItem";
@@ -80,11 +87,18 @@
             this.SaveMenuItem.Text = "Сохранить";
             this.SaveMenuItem.Click += new System.EventHandler(this.SaveMenuItem_Click);
             // 
+            // SaveAsMenuItem
+            // 
+            this.SaveAsMenuItem.Name = "SaveAsMenuItem";
+            this.SaveAsMenuItem.Text = "Сохранить как";
+            this.SaveAsMenuItem.Click += new System.EventHandler(this.SaveAsMenuItem_Click);
+            // 
             // LanguageMenuItem
             // 
             this.LanguageMenuItem.Items.AddRange(new Telerik.WinControls.RadItem[] {
             this.radMenuItem2,
-            this.radMenuItem3});
+            this.radMenuItem3,
+            this.radMenuItem1});
             this.LanguageMenuItem.Name = "LanguageMenuItem";
             this.LanguageMenuItem.Text = "Язык";
             // 
@@ -99,6 +113,12 @@
             this.radMenuItem3.Name = "radMenuItem3";
             this.radMenuItem3.Text = "JSON";
             this.radMenuItem3.Click += new System.EventHandler(this.SetJSONStyle_Click);
+            // 
+            // radMenuItem1
+            // 
+            this.radMenuItem1.Name = "radMenuItem1";
+            this.radMenuItem1.Text = "Пользовательский";
+            this.radMenuItem1.Click += new System.EventHandler(this.SetUserStyle_Click);
             // 
             // SettingsMenuItem
             // 
@@ -132,17 +152,6 @@
             this.ModeStripLabel.Name = "ModeStripLabel";
             this.ModeStripLabel.Size = new System.Drawing.Size(104, 22);
             this.ModeStripLabel.Text = "Режим редактора";
-            // 
-            // NewMenuItem
-            // 
-            this.NewMenuItem.Name = "NewMenuItem";
-            this.NewMenuItem.Text = "Создать";
-            // 
-            // SaveAsMenuItem
-            // 
-            this.SaveAsMenuItem.Name = "SaveAsMenuItem";
-            this.SaveAsMenuItem.Text = "Сохранить как";
-            this.SaveAsMenuItem.Click += new System.EventHandler(this.SaveAsMenuItem_Click);
             // 
             // MainForm
             // 
@@ -183,5 +192,6 @@
         private Telerik.WinControls.UI.RadMenuItem OpenMenuItem;
         private Telerik.WinControls.UI.RadMenuItem NewMenuItem;
         private Telerik.WinControls.UI.RadMenuItem SaveAsMenuItem;
+        private Telerik.WinControls.UI.RadMenuItem radMenuItem1;
     }
 }
