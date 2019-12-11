@@ -50,7 +50,7 @@
             this.FileListView.ItemSpacing = -1;
             this.FileListView.Location = new System.Drawing.Point(0, 0);
             this.FileListView.Name = "FileListView";
-            this.FileListView.Size = new System.Drawing.Size(401, 288);
+            this.FileListView.Size = new System.Drawing.Size(711, 288);
             this.FileListView.TabIndex = 1;
             this.FileListView.ViewType = Telerik.WinControls.UI.ListViewType.DetailsView;
             this.FileListView.ItemMouseDoubleClick += new Telerik.WinControls.UI.ListViewItemEventHandler(this.FileListView_ItemMouseDoubleClick);
@@ -59,7 +59,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(401, 288);
+            this.ClientSize = new System.Drawing.Size(711, 288);
             this.Controls.Add(this.FileListView);
             this.MaximizeBox = false;
             this.MinimizeBox = false;

@@ -1,12 +1,9 @@
 ﻿namespace TestNotepad
 {
-    public partial class MainForm
+    public enum Mode
     {
-        public enum Mode
-        {
-            Custom,
-            XML,
-            JSON
-        }
+        Custom,
+        XML,
+        JSON
     }
 }

@@ -7,6 +7,18 @@ using System.IO;
 using System.Windows.Forms;
 using Telerik.WinControls;
 
+/* Реализовать текстовый редактор с возможностью сохранения/загрузки файлов в/из БД.
+   В качестве БД желательно использовать SQLite, но непринципиально.
+   Условия выполнения задания:
+    - Настройки подключения к базе в файле конфигурации приложения
+    - Разработать форму выбора файла для загрузки
+   Дополнительные задания:
+    - Обеспечить сжатие информации при хранении в БД средством любой ThirdParty библиотеки
+    - Загрузка файла из базы и сохранение в базу асинхронно
+    - Разработать форму ввода имени файла для сохранения
+    - Для форматов json и xml обеспечить подсветку синтаксиса и форматирование
+ */
+
 namespace TestNotepad
 {
     public partial class MainForm : Telerik.WinControls.UI.RadForm
@@ -40,6 +52,15 @@ namespace TestNotepad
         }
         private void SetXMLStyle()
         {
+            /*
+             <?xml version="1.0" encoding="UTF-8"?>
+             <note>
+                 <to>Tove</to>
+                 <from>Jani</from>
+                 <heading>Reminder</heading>
+                 <body>Don't forget me this weekend!</body>
+             </note>
+             */
             TextEditor.Styles[Style.Xml.Default].ForeColor = Color.Black;
             TextEditor.Styles[Style.Xml.Attribute].ForeColor = Color.Red;
             TextEditor.Styles[Style.Xml.TagUnknown].ForeColor = Color.SaddleBrown;
@@ -57,6 +78,19 @@ namespace TestNotepad
         }
         private void SetJSONStyle()
         {
+            /*
+             {"menu": {
+                  "id": "file",
+                  "value": "File",
+                  "popup": {
+                    "menuitem": [
+                      {"value": "New", "onclick": "CreateNewDoc()"},
+                      {"value": "Open", "onclick": "OpenDoc()"},
+                      {"value": "Close", "onclick": "CloseDoc()"}
+                    ]
+                  }
+                }}
+             */
             TextEditor.Styles[Style.Json.Operator].ForeColor = Color.Black;
             TextEditor.Styles[Style.Json.Default].ForeColor = Color.Black;
             TextEditor.Styles[Style.Json.Keyword].ForeColor = Color.FromArgb(0, 0, 255);

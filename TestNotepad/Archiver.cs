@@ -2,20 +2,6 @@
 using System.IO.Compression;
 using System.Text;
 
-/* Реализовать текстовый редактор с возможностью сохранения/загрузки файлов в/из БД.
-   В качестве БД желательно использовать SQLite, но непринципиально.
-   Условия выполнения задания:
-- Настройки подключения к базе в файле конфигурации приложения
-- Разработать форму выбора файла для загрузки
-Дополнительные задания:
-- Обеспечить сжатие информации при хранении в БД средством любой ThirdParty библиотеки
-
-
-
-- Загрузка файла из базы и сохранение в базу асинхронно
-- Разработать форму ввода имени файла для сохранения
-- Для форматов json и xml обеспечить подсветку синтаксиса и форматирование
- */
 namespace TestNotepad
 {
     public class Archiver : IArchiver
@@ -31,11 +17,13 @@ namespace TestNotepad
         {
             var bytes = Encoding.UTF8.GetBytes(str);
             using (var msi = new MemoryStream(bytes))
-            using (var mso = new MemoryStream())
             {
-                using (var gs = new GZipStream(mso, CompressionMode.Compress))
-                    CopyTo(msi, gs);
-                return mso.ToArray();
+                using (var mso = new MemoryStream())
+                {
+                    using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                        CopyTo(msi, gs);
+                    return mso.ToArray();
+                }
             }
         }
         public string Unzip(byte[] bytes)

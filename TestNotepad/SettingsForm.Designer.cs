@@ -48,7 +48,7 @@
             this.PathTextBox.Location = new System.Drawing.Point(164, 12);
             this.PathTextBox.Name = "PathTextBox";
             this.PathTextBox.NullText = "Выберите папку хранения...";
-            this.PathTextBox.Size = new System.Drawing.Size(187, 21);
+            this.PathTextBox.Size = new System.Drawing.Size(202, 21);
             this.PathTextBox.TabIndex = 1;
             // 
             // label1
@@ -67,7 +67,7 @@
             this.ChooseFolderButton.DisplayStyle = Telerik.WinControls.DisplayStyle.Image;
             this.ChooseFolderButton.Font = new System.Drawing.Font("Sitka Text", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ChooseFolderButton.Image = ((System.Drawing.Image)(resources.GetObject("ChooseFolderButton.Image")));
-            this.ChooseFolderButton.Location = new System.Drawing.Point(357, 9);
+            this.ChooseFolderButton.Location = new System.Drawing.Point(372, 12);
             this.ChooseFolderButton.Name = "ChooseFolderButton";
             this.ChooseFolderButton.Size = new System.Drawing.Size(29, 24);
             this.ChooseFolderButton.TabIndex = 3;
@@ -77,10 +77,10 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SaveButton.Font = new System.Drawing.Font("Sitka Text", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.SaveButton.Image = ((System.Drawing.Image)(resources.GetObject("SaveButton.Image")));
-            this.SaveButton.Location = new System.Drawing.Point(268, 46);
+            this.SaveButton.Location = new System.Drawing.Point(407, 12);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(118, 22);
             this.SaveButton.TabIndex = 4;
@@ -93,18 +93,21 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(396, 80);
+            this.ClientSize = new System.Drawing.Size(537, 50);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.ChooseFolderButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.PathTextBox);
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(650, 80);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(545, 80);
             this.Name = "SettingsForm";
             // 
             // 
             // 
             this.RootElement.ApplyShapeToControl = true;
+            this.RootElement.MaxSize = new System.Drawing.Size(650, 80);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Настройки программы";
             ((System.ComponentModel.ISupportInitialize)(this.PathTextBox)).EndInit();
